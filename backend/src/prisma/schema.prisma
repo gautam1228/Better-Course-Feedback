@@ -6,3 +6,96 @@ datasource db {
   provider = "postgresql"
   url      = env("DB_URL")
 }
+
+// User model
+model User {
+  id        Int     @id @default(autoincrement())
+  email     String  @unique
+  password  String  @db.VarChar(255) 
+  name      String  @db.VarChar(255)
+  rollNumber String @db.VarChar(255)
+  branch    String?
+  verified  Boolean @default(false)
+
+  // Relations
+  reviews  Review[]
+  advice   Advice[]
+}
+
+// Course model
+model Course {
+  id    Int    @id @default(autoincrement())
+  name  String @db.VarChar(255)
+  code  String @unique
+
+  // Relations
+  teachings TeachingMapping[]
+}
+
+// Professor model
+model Professor {
+  id    Int    @id @default(autoincrement())
+  name  String @db.VarChar(255)
+
+  // Relations
+  teachings TeachingMapping[]
+}
+
+// Teaching Mapping model
+model TeachingMapping {
+  id          Int       @id @default(autoincrement())
+  year        Int
+  semester    Int
+
+  // Foreign Keys
+  courseId    Int
+  professorId Int
+  course      Course    @relation(fields: [courseId], references: [id])
+  professor   Professor @relation(fields: [professorId], references: [id])
+
+  // Relations
+  reviews  Review[]
+  advice   Advice[]
+}
+
+// Review model
+model Review {
+  id          Int      @id @default(autoincrement())
+  review      String   @db.Text
+  difficulty  Int
+  grading     Grading
+  sentiment   Sentiment
+  likes       Int      @default(0)
+
+  // Foreign Keys
+  userId      Int
+  mapId       Int
+  user        User         @relation(fields: [userId], references: [id])
+  teachingMap TeachingMapping @relation(fields: [mapId], references: [id])
+}
+
+// Advice model
+model Advice {
+  id          Int      @id @default(autoincrement())
+  advice      String   @db.Text
+  likes       Int      @default(0)
+
+  // Foreign Keys
+  userId      Int
+  mapId       Int
+  user        User         @relation(fields: [userId], references: [id])
+  teachingMap TeachingMapping @relation(fields: [mapId], references: [id])
+}
+
+// Enum definitions
+enum Grading {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum Sentiment {
+  POSITIVE
+  NEUTRAL
+  NEGATIVE
+}
