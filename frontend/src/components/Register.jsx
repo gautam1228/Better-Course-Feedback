@@ -4,7 +4,6 @@ import TextField from '@mui/material/TextField';
 
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
@@ -14,14 +13,10 @@ export default function Register() {
     const [password, setPassword] = useState('');
     const [branch, setBranch] = React.useState('');
 
-    const handleSubmit = (event) =>{
-        event.preventDefault();
-    }
-
     return (
         <div style= {styles.container}>
             <h2>Register</h2>
-            <form onSubmit={handleSubmit} style={styles.form}> 
+            <form onSubmit={(event) =>{event.preventDefault();}} style={styles.form}> 
                 <TextField 
                 required
                 id="name" 
