@@ -30,47 +30,49 @@ const LandingPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="px-4 lg:px-6 h-14 flex items-center">
-        <a href="#" className="flex items-center justify-center">
+      <header className="px-4 lg:px-8 h-16 flex items-center bg-gray-900 text-white text-xl font-semibold shadow-2xl">
+        <a href="/" className="flex items-center justify-center">
           <BookOpen className="h-6 w-6" />
           <span className="sr-only">CourseReview</span>
         </a>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <a href="/register" className="text-sm font-medium hover:underline underline-offset-4">
-            Register
-          </a>
-          <a href="/login" className="text-sm font-medium hover:underline underline-offset-4">
-            Login
-          </a>
-          <a href="/about" className="text-sm font-medium hover:underline underline-offset-4">
+        <div className="ml-auto flex sm:gap-6 items-center">
+          <a href="/about" className="hover:underline underline-offset-8 mx-4">
             About
           </a>
-          <a href="/contact" className="text-sm font-medium hover:underline underline-offset-4">
+          <a href="/contact" className="hover:underline underline-offset-8 mx-4">
             Contact
           </a>
-        </nav>
+          <a href="/register" className="hover:underline underline-offset-8 mx-4">
+            Register
+          </a>
+          <a href="/login" className="hover:underline underline-offset-8 mx-4">
+            <button className="text-lg bg-gray-700 py-1 px-3 rounded-lg">
+              Login
+            </button>
+          </a>
+        </div>
       </header>
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
+        <section className="w-full md:py-24 lg:py-32 xl:py-48 ">
           <div className="container px-4 md:px-6 mx-auto">
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+            <div className="flex flex-col items-center text-center">
+              <div className="space-y-2 mb-10">
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none mb-7">
                   Discover Your Perfect Courses
                 </h1>
-                <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl ">
+                <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl">
                   CourseReview helps you make informed decisions about your education. Read and share honest reviews from fellow students.
                 </p>
               </div>
-              <div className="w-full max-w-sm space-y-2">
+              <div className="w-full max-w-sm space-y-2 mt-12 ">
                 <form className="flex space-x-2">
                   <input
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex-1"
+                    className="flex w-full rounded-md border border-input bg-background px-5 py-2 text-md text-black font-semibold h-12 w-300"
                     placeholder="Search for a course..."
                     type="text"
                   />
                   <button
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-4 py-2 bg-gray-800 text-white"
+                    className="inline-flex items-center justify-center rounded-md text-sm font-medium px-5 bg-gray-800 text-white h-12"
                     type="submit"
                   >
                     <Search className="h-4 w-4 mr-2" />

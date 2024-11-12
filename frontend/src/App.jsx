@@ -3,6 +3,8 @@ import Login from './components/LoginPage';
 import Register from './components/RegisterPage';
 import WriteReviews from './components/WriteReviewsPage';
 import LandingPage from "./components/LandingPage";
+import AboutPage from "./components/AboutPage";
+import ContactPage from "./components/ContactPage";
 
 const router = createBrowserRouter(
   [
@@ -28,6 +30,18 @@ const router = createBrowserRouter(
       element: 
       <div>
         <WriteReviews />
+      </div>
+    },
+    {path: "/about",
+      element: 
+      <div>
+        <AboutPage />
+      </div>
+    },
+    {path: "/contact",
+      element: 
+      <div>
+        <ContactPage />
       </div>
     }
   ]
