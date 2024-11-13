@@ -6,6 +6,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { useNavigate } from 'react-router-dom';
 
 export default function Register() {
     const [fullName, setFullName] = useState('');
@@ -13,10 +14,12 @@ export default function Register() {
     const [password, setPassword] = useState('');
     const [branch, setBranch] = React.useState('');
 
+    const navigate = useNavigate();
+
     return (
         <div style= {styles.container}>
             <h2>Register</h2>
-            <form onSubmit={(event) =>{event.preventDefault();}} style={styles.form}> 
+            <form onSubmit={(event) =>{event.preventDefault(); navigate('/');}} style={styles.form}> 
                 <TextField 
                 required
                 id="name" 

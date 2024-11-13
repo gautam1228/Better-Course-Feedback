@@ -3,6 +3,8 @@ import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import Login from './components/Login';
 import Register from './components/Register';
 import WriteReviews from './components/WriteReviews';
+import Reviews from './components/Reviews';
+import Course from './components/Course';
 
 const router = createBrowserRouter(
   [
@@ -28,6 +30,18 @@ const router = createBrowserRouter(
       element: 
       <div>
         <WriteReviews />
+      </div>
+    },
+    {path: "/reviews",
+      element: 
+      <div>
+        <Reviews />
+      </div>
+    },
+    {path: "/course/:id",
+      element: 
+      <div>
+        <Course />
       </div>
     }
   ]

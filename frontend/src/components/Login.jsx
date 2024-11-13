@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -13,6 +16,7 @@ export default function Login() {
       // Here you would usually send a request to a server
       console.log("Logging in with:", email, password);
       setError(""); // Reset error message
+      navigate('/')
     }
   };
 
