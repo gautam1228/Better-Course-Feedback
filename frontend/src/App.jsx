@@ -1,8 +1,10 @@
-import './App.css'
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import Login from './components/Login';
-import Register from './components/Register';
-import WriteReviews from './components/WriteReviews';
+import Login from './components/LoginPage';
+import Register from './components/RegisterPage';
+import WriteReviews from './components/WriteReviewsPage';
+import LandingPage from "./components/LandingPage";
+import AboutPage from "./components/AboutPage";
+import ContactPage from "./components/ContactPage";
 import Reviews from './components/Reviews';
 import Course from './components/Course';
 
@@ -11,7 +13,7 @@ const router = createBrowserRouter(
     {path: "/",
       element: 
       <div>
-        <h1>Landing Page</h1>
+        <LandingPage/>
       </div>
     },
     {path: "/login",
@@ -30,6 +32,18 @@ const router = createBrowserRouter(
       element: 
       <div>
         <WriteReviews />
+      </div>
+    },
+    {path: "/about",
+      element: 
+      <div>
+        <AboutPage />
+      </div>
+    },
+    {path: "/contact",
+      element: 
+      <div>
+        <ContactPage />
       </div>
     },
     {path: "/reviews",
