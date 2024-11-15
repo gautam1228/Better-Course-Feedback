@@ -5,8 +5,8 @@ import WriteReviews from './components/WriteReviewsPage';
 import LandingPage from "./components/LandingPage";
 import AboutPage from "./components/AboutPage";
 import ContactPage from "./components/ContactPage";
-import Reviews from './components/Reviews';
-import Course from './components/Course';
+import Reviews from './components/ReviewsPage';
+import Course from './components/CoursePage';
 
 const router = createBrowserRouter(
   [
