@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -8,8 +10,17 @@ export default function RegisterPage() {
     password: '',
     branch: '',
   })
+  const [error, setError] = useState('')
 
-  const [isFocused, setIsFocused] = useState(false);  
+  const branches = [{name: 'Computer Science and Applied Mathematics', code: 'CSAM'},
+                    {name: 'Computer Science and Artificial Intelligence', code: 'CSAI'},
+                    {name: 'Computer Science and Biosciences', code: 'CSB'},
+                    {name: 'Computer Science and Design', code: 'CSD'},
+                    {name: 'Computer Science and Engineering', code: 'CSE'},
+                    {name: 'Computer Science and Social Sciences', code: 'CSSS'},
+                    {name: 'Electronics and Communications Engineering', code: 'ECE'},
+                    {name: 'Electronics and VLSI Engineering', code: 'EVE'}]
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -22,17 +33,16 @@ export default function RegisterPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Connect to backend
+    
     console.log('Form submitted:', formData)
     navigate('/')
-
   }
   
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
-        <h2 className=" text-center text-3xl font-extrabold text-gray-900 mb-4">Register</h2>
-        <p className="text-gray-600 mb-6">Please fill in your details to register.</p>
+        <h2 className=" text-center text-3xl font-extrabold text-gray-900 mb-4">Sign Up</h2>
+        <p className="text-gray-600 mb-6">Please fill in your details to create an account.</p>
         <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -91,34 +101,23 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="branch" className="block text-sm font-medium text-gray-700">
-                Branch
-              </label>
-              <div className="mt-1">
-                <select
-                  id="branch"
-                  name="branch"
-                  placeholder= ""
-                  required
-                  className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black-500 focus:border-black-500 sm:text-sm"
-                  value={formData.branch}
-                  onChange={handleChange}
-                  >
-
-                  <option value="" disabled className="text-gray-400 opacity-50">
-                    Select your branch
-                  </option>
-
-                  <option value="CSAM">Computer Science and Applied Mathematics (CSAM)</option>
-                  <option value="CSAI">Computer Science and Artificial Intelligence (CSAI)</option>
-                  <option value="CSB">Computer Science and Biosciences (CSB)</option>
-                  <option value="CSD">Computer Science and Design (CSD)</option>
-                  <option value="CSE">Computer Science and Engineering (CSE)</option>
-                  <option value="CSSS">Computer Science and Social Sciences (CSSS)</option>
-                  <option value="ECE">Electronics and Communications Engineering (ECE)</option>
-                  <option value="EVE">Electronics and VLSI Engineering (EVE)</option>
-                </select>
-              </div>
+              <Label htmlFor="branches">Branches</Label>
+              <Select onValueChange={(value) => 
+                setFormData((prevState) => ({
+                  ...prevState,
+                  ['branch']: value,
+              }))}>
+                <SelectTrigger id="branch">
+                  <SelectValue placeholder="Select your branch" className='text-gray-400'/>
+                </SelectTrigger>
+                <SelectContent>
+                  {branches.map((branch) => (
+                    <SelectItem key={branch.name} value={branch.code}>
+                      {`${branch.name} (${branch.code})`}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
@@ -126,7 +125,7 @@ export default function RegisterPage() {
                 type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
               >
-                Register
+                Sign Up
               </button>
             </div>
         </form>        

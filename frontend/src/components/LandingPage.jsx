@@ -43,7 +43,7 @@ const LandingPage = () => {
             Contact
           </a>
           <a href="/register" className="hover:underline underline-offset-8 mx-4">
-            Register
+            Sign Up
           </a>
           <a href="/login" className="hover:underline underline-offset-8 mx-4">
             <button className="text-lg bg-gray-700 py-1 px-3 rounded-lg">

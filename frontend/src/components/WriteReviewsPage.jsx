@@ -1,181 +1,164 @@
-import React, { useState } from 'react';
+import { useState } from 'react'
+import { Star } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import { useNavigate } from 'react-router-dom';
 
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import Slider from '@mui/material/Slider';
-import Rating from '@mui/material/Rating';
-import StarIcon from '@mui/icons-material/Star';
-import Button from '@mui/material/Button';
+// Mock data for professors and courses
+const professors = ['Dr. Smith', 'Dr. Johnson', 'Dr. Williams', 'Dr. Brown', 'Dr. Jones'].sort()
+const courses = [
+  { department: 'CSE', courses: ['Data Structures and Algorithms', 'Database Systems', 'Operating Systems'] },
+  { department: 'ECE', courses: ['Digital Electronics', 'Signals and Systems', 'Control Systems', 'VLSI Design'] },
+  { department: 'ME', courses: ['Thermodynamics', 'Fluid Mechanics', 'Machine Design', 'Heat Transfer'] },
+].sort((a, b) => a.department.localeCompare(b.department))
 
-export default function WriteReviews(){
-    const [course, setCourse] = useState('');
-    const [professor, setProfessor] = useState('');
-    const [year, setYear] = useState('');
-    const [semester, setSemester] = React.useState(0);
-    const [review, setReview] = useState('');
-    const [rating, setRating] = React.useState(0);
-    const [hoverRating, setHoverRating] = React.useState(-1);
+const years = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024].reverse()
+const semesters = [1, 2, 3, 4, 5, 6, 7, 8]
+
+export default function Component() {
+  const navigate = useNavigate();
+  const [hoverRating, setHoverRating] = useState(0);
+  const [formData, setFormData] = useState({
+    professor: '',
+    course: '',
+    year: '',
+    semester: '',
+    rating: '',
+    review: ''
+  })
+
+  const handleChange = (value, fieldName) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [fieldName]: value,
+    }));
+  };
   
-    return(
-        <div>
-        <h2>Write a review!</h2>
-        <form onSubmit={(event) =>{event.preventDefault();}}> 
-            <Autocomplete
-                required
-                options={courses.sort((a, b) => a.code.substring(0, 3).localeCompare(b.code.substring(0, 3)))}
-                groupBy={(option) => option.code.substring(0, 3)}
-                getOptionLabel={(option) => option.title}
-                onChange={(event, val) => {setCourse(val); console.log(val);}}
-                sx={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} label="Select course" />}
-            />
-            <br />
 
-            <Autocomplete
-                required
-                options={professors.sort((a, b) => a.name[0].localeCompare(b.name[0]))}
-                getOptionLabel={(option) => option.name}
-                onChange={(event, val) => {setProfessor(val); console.log(val);}}
-                sx={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} label="Select professor" />}
-            />
-            <br />
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    // Handle form submission here
+    console.log('Form submitted', formData)
+    navigate('/')
+  }
 
-            <FormControl required sx={{ m: 1, minWidth: 120 }}>
-                <InputLabel id="year-input">Year</InputLabel>
-                <Select
-                    required
-                    labelId="year-label"
-                    id="year"
-                    value={year}
-                    label="Year *"
-                    onChange={(event) =>{setYear(event.target.value); console.log(event.target.value)}}
-                    >
-                    <MenuItem value= ''>
-                    <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={2017}>2017</MenuItem>
-                    <MenuItem value={2018}>2018</MenuItem>
-                    <MenuItem value={2019}>2019</MenuItem>
-                    <MenuItem value={2020}>2020</MenuItem>
-                    <MenuItem value={2021}>2021</MenuItem>
-                    <MenuItem value={2023}>2023</MenuItem>
-                    <MenuItem value={2024}>2024</MenuItem>
+  return (
+    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+      <Card className="max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-center">Write a Review</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <Label htmlFor="professor">Professor</Label>
+              <Select onValueChange={(value) => {handleChange(value, 'professor')}}>
+                <SelectTrigger id="professor">
+                  <SelectValue placeholder="Select a professor"/>
+                </SelectTrigger>
+                <SelectContent>
+                  {professors.map((professor) => (
+                    <SelectItem key={professor} value={professor}>
+                      {professor}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="course">Course</Label>
+              <Select onValueChange={(value) => {handleChange(value, 'course')}}>
+                <SelectTrigger id="course">
+                  <SelectValue placeholder="Select a course" />
+                </SelectTrigger>
+                <SelectContent>
+                  {courses.map((dept) => (
+                    <SelectGroup key={dept.department}>
+                      <SelectLabel>{dept.department}</SelectLabel>
+                      {dept.courses.sort().map((course) => (
+                        <SelectItem key={course} value={course}>
+                          {course}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="year">Year</Label>
+                <Select onValueChange={(value) => {handleChange(value, 'year')}}>
+                  <SelectTrigger id="year">
+                    <SelectValue placeholder="Select year" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {years.map((year) => (
+                      <SelectItem key={year} value={year.toString()}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
-            </FormControl>
-            <br />
+              </div>
 
-            <h3>Enter Semester</h3>
-            <Slider
-                required
-                size= "small"
-                aria-label="semester"
-                defaultValue={1}
-                step={1}
-                valueLabelDisplay="auto"
-                min={1}
-                max={8}
-                onChange={(event, val) => {setSemester(val); console.log(val);}}
-                sx={{
-                    width: 250,
-                    height: 5
-                }}
-            />
-            <br />
+              <div>
+                <Label htmlFor="semester">Semester</Label>
+                <Select onValueChange={(value) => {handleChange(value, 'semester')}}>
+                  <SelectTrigger id="semester">
+                    <SelectValue placeholder="Select semester" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {semesters.map((semester) => (
+                      <SelectItem key={semester} value={semester.toString()}>
+                        Semester {semester}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
 
-            <TextField 
-                required
-                id="review" 
-                label="Review" 
-                variant="outlined"
-                type= 'text' 
-                placeholder='Post a review...' 
-                value= {review} 
-                onChange={(event) =>{setReview(event.target.value); console.log(event.target.value)}}
-                sx={{
-                    width: 500, 
-                }}
-                multiline
-                rows={4}
-                inputProps={{
-                    style: {
-                        height: '10px',  
-                        padding: '10px',
-                    }
-                }}
-            />
-            <br />
-            <br />
-            <Rating
-                required
-                name="hover-feedback"
-                value={rating}
-                onChange={(event, newRating) => {setRating(newRating); console.log(newRating)}}
-                onChangeActive={(event, newHoverRating) => {setHoverRating(newHoverRating); console.log(newHoverRating)}}
-                emptyIcon={<StarIcon style={{ opacity: 1 }} fontSize="inherit" />}
-                // getLabelText={(value) => {
-                //     return `${value} Star${value !== 1 ? 's' : ''}, ${labels[value]}`;
-                //   }}
-            />
-            <br />
-            <br />
+            <div>
+                <Label htmlFor="rating">Rating</Label>
+                <div className="flex items-center space-x-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                        key={star}
+                        className={`w-8 h-8 cursor-pointer transition-all duration-200 transform ${
+                        star <= (hoverRating || formData.rating)
+                            ? 'text-yellow-400 fill-yellow-400 scale-110'
+                            : 'text-gray-300'
+                        } hover:scale-125`}
+                        onClick={() => setFormData(prevState => ({
+                          ...prevState,
+                          ['rating']: star
+                        }))}
+                        onMouseEnter={() => setHoverRating(star)}
+                        onMouseLeave={() => setHoverRating(0)}
+                    />
+                    ))}
+                </div>
+            </div>
 
-            <Button variant="contained" type='submit'>Submit Review!</Button>
-            <br />
-        </form>
-        </div>
-    );
-};
-
-const courses = 
-[
-    { code: 'CSE102', title: 'Data Structures and Algorithms' },
-    { code: 'CSE231', title: 'Operating Systems' },
-    { code: 'CSE201', title: 'Advanced Programming' },
-    { code: 'ECE250', title: 'Signals and Systems' },
-    { code: 'ECE111', title: 'Digital Circuits' },
-    { code: 'MTH210', title: 'Discrete Structures' },
-    { code: 'MTH377', title: 'Convex Optimization' },
-    { code: 'ECO223', title: 'Money and Banking' },
-];
-
-const professors = 
-[
-    { name: 'Pankaj Jalote'},
-    { name: 'Tammam Tillo'},
-    { name: 'Rajiv Ratan'},
-    { name: 'Payal Mukherji'},
-    { name: 'Piyush Kedia'},
-    { name: 'Sanjit Kaul'},
-    { name: 'Jainendra Shukla'},
-    { name: 'Kiriti Kanjilal'},
-    { name: 'Sujay Deb'},
-    { name: 'Koteswar Rao Jerripothula'},
-    { name: 'Dhruv Kumar'},
-    { name: 'Rajiv Raman'},
-    { name: 'Satish Kumar Pandey'},
-    { name: 'Anubha Gupta'},
-    { name: 'Ashish Kumar Pandey'},
-    { name: 'A V Subramanyam'},
-    { name: 'Mukesh Mohania'},
-    { name: 'Diptapriyo Majumdar'},
-    { name: 'Ruhi Sonal'},
-    { name: 'Supratim Shit'},
-    { name: 'Saket Anand'},
-    { name: 'Pushpendra Singh'},
-    { name: 'Vinayak Abrol'},
-    { name: 'Anuj Grover'}
-]
-
-// const labels = {
-//     1: 'Avoid Completely',
-//     2: 'Needs Improvement',
-//     3: 'Decent Option',
-//     4: 'Worth Considering',
-//     5: 'Highly Recommended',
-// };
-// NOTE: NOT WORKING PROPERLY
+            <div>
+              <Label htmlFor="review">Review</Label>
+              <Textarea
+                id="review"
+                placeholder="Write your review here..."
+                className="mt-1"
+                rows={5}
+              />
+            </div>
+          <Button type="submit" className="w-full">Submit Review</Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
