@@ -7,6 +7,7 @@ import AboutPage from "./components/AboutPage";
 import ContactPage from "./components/ContactPage";
 import Reviews from './components/ReviewsPage';
 import Course from './components/CoursePage';
+import Test from './components/Test';
 
 const router = createBrowserRouter(
   [
@@ -56,6 +57,12 @@ const router = createBrowserRouter(
       element: 
       <div>
         <Course />
+      </div>
+    },
+    {path: "/test",
+      element: 
+      <div>
+        <Test />
       </div>
     }
   ]
