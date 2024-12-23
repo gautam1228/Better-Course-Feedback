@@ -1,9 +1,10 @@
+import React, { useState } from 'react'
 import { Star, User, Check, ChevronsUpDown } from 'lucide-react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
+import { ResponsiveContainer, PieChart, Pie, Cell, Sector, Text } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useNavigate } from 'react-router-dom';
 
 const courseDetails = {
   name: "DATA STRUCTURES AND ALGORITHMS",
@@ -18,14 +19,6 @@ const reviews = [
   { id: 3, author: "Mike R.", rating: 3, comment: "Good content, but heavy workload." }
 ]
 
-const ratings = {
-    easiness: 3.8,
-    workload: 4.2,
-    teachingQuality: 4.5,
-    courseMaterial: 4.0,
-    management: 3.9
-}
-
 const professorReviews = [
     { name: "Dr. Smith", reviews: 120 },
     { name: "Prof. Johnson", reviews: 85 },
@@ -34,12 +27,42 @@ const professorReviews = [
 
 
 const distributions = {
-    1: 23,
-    2: 45,
-    3: 140,
-    4: 196,
-    5: 350
-}
+    "Grading Difficulty": {
+        5: 10,
+        4: 18,
+        3: 15,
+        2: 5,
+        1: 2,
+    },
+    "Academic Workload": {
+        5: 8,
+        4: 16,
+        3: 19,
+        2: 4,
+        1: 3,
+    },
+    "Teaching Quality": {
+        5: 12,
+        4: 22,
+        3: 18,
+        2: 6,
+        1: 4,
+    },
+    "Course Content": {
+        5: 15,
+        4: 25,
+        3: 10,
+        2: 7,
+        1: 3,
+    },
+    "Management": {
+        5: 20,
+        4: 30,
+        3: 10,
+        2: 5,
+        1: 1,
+    },
+};
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8']
 
@@ -57,30 +80,34 @@ const averageRating = (distribution) =>{
 }
  
 const StarRating = ({ rating }) => {
-    const fullStars = Math.floor(rating)
-    const hasHalfStar = rating % 1 >= 0.5
+    const fullStars = Math.floor(Math.round(rating * 10) / 10)
+    const hasHalfStar = (Math.round(rating * 10) / 10) % 1 >= 0.5
 
     return (
         <div className="flex">
         {[...Array(5)].map((_, i) => (
-            <Star
-            key={i}
-            className={`w-6 h-6 ${
-                i < fullStars
-                ? "text-yellow-400 fill-yellow-400"
-                : i === fullStars && hasHalfStar
-                ? "text-yellow-400 fill-yellow-400 [clip-path:inset(0_50%_0_0)]"
-                : "text-gray-300"
-            }`}
-            />
+            <div key={i} className="relative w-6 h-6">
+
+            <Star className="absolute top-0 left-0 w-full h-full text-gray-200 fill-gray-200"  style={{ strokeWidth: 1.2 }} />
+
+            {i < fullStars && (
+                <Star className="absolute top-0 left-0 w-full h-full text-yellow-400 fill-yellow-400" style={{ strokeWidth: 1.2 }}/>
+            )}
+
+            {i === fullStars && hasHalfStar && (
+                <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
+                <Star className="w-full h-full text-yellow-400 fill-yellow-400 [clip-path:inset(0_50%_0_0)]" style={{ strokeWidth: 1.2 }}/>
+                </div>
+            )}
+            </div>
         ))}
         </div>
-    )
+    );
 }
 
 const ProgressBar = ({ value }) => {
     return(
-        <div className="h-4 w-full bg-gray-200 overflow-hidden">
+        <div className="h-4 w-80 bg-gray-200 overflow-hidden">
             <div
                 className="h-full bg-yellow-400"
                 style={{ width: `${value}%` }}
@@ -89,30 +116,150 @@ const ProgressBar = ({ value }) => {
   );
 }
 
-const RatingDistributionCard = ({distribution, parameter}) =>{
-    const total = totalRatings(distribution);
-    const average = averageRating(distribution);
+const renderActiveShape = (props) => {
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload } = props
     return (
-        <Card className="w-full">
+      <g>
+        <text x={cx} y={cy} dy={8} textAnchor="middle" verticalAnchor='middle' className='text-2xl font-bold' fill='gray'>
+            {payload.reviews} reviews
+        </text>
+        <Sector
+          cx={cx}
+          cy={cy}
+          innerRadius={innerRadius}
+          outerRadius={outerRadius + 10}
+          startAngle={startAngle}
+          endAngle={endAngle}
+          fill={fill}
+        />
+      </g>
+    )
+}
+
+const ProfessorReviewsCard = () =>{
+
+    const [activeIndex, setActiveIndex] = useState(-1)  
+
+    const getReviewCount = () => {
+        if (activeIndex === -1) return null;
+        console.log(professorReviews[activeIndex].reviews);
+        return professorReviews[activeIndex].reviews;
+    };
+
+    return(
+        <Card>
             <CardHeader>
-                <CardTitle> {parameter} </CardTitle>
-                <p className="text-sm text-muted-foreground">{total} total ratings</p>
+                <CardTitle>Professor Reviews</CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="flex flex-col md:flex-row md:items-center md:space-x-4">
+                    <div className="flex-shrink-0 w-full md:w-auto mb-4 md:mb-0">
+                        <Select 
+                        onValueChange={(value) => {
+                            if (value === "all") {
+                                setActiveIndex(-1);
+                            } else {
+                                const index = professorReviews.findIndex((prof) => prof.name === value);
+                                setActiveIndex(index);
+                            }
+                        }}
+                        
+                        defaultValue='all'>
+                            <SelectTrigger id="professor">
+                                <SelectValue placeholder="Select a professor" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Professors</SelectItem>
+                                {professorReviews.map((professor) => (
+                                    <SelectItem key={professor.name} value={professor.name}>
+                                        {professor.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+
+                    <div className="flex-grow h-[300px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                            <Pie
+                            data={professorReviews}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={80}
+                            outerRadius={100}
+                            dataKey="reviews"
+                            activeIndex={activeIndex === -1 ? undefined : activeIndex}
+                            activeShape={renderActiveShape}
+                            className="outline-none"
+                            >
+                            {professorReviews.map((_, index) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                            </Pie>
+                        </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
+
+const RatingDistributionCard = () =>{
+
+    const [selectedCriteria, setSelectedCriteria] = useState(
+        Object.keys(distributions)[0]
+    );
+
+    
+    const selectedDistribution = distributions[selectedCriteria];
+    const total = totalRatings(selectedDistribution);
+    const average = averageRating(selectedDistribution);
+
+    return (
+        <Card className="w-full">
+            <CardHeader>
+                <CardTitle> {selectedCriteria} </CardTitle>
+                <p className="text-sm text-muted-foreground">{total} total ratings</p>
+            </CardHeader>
+            <CardContent>
+                <div className="flex flex-col md:flex-row md:items-start md:space-x-4">
                     <div className="flex-1 space-y-3 mb-4 md:mb-0">
-                        {Object.entries(distribution)
-                        .sort(([a], [b]) => Number(b) - Number(a))
-                        .map(([rating, count]) => (
-                            <div key={rating} className="flex items-center">
-                            <span className="w-16 text-sm text-right mr-2">{rating} star{Number(rating) !== 1 ? 's' : ''}</span>
-                            <ProgressBar value={total > 0 ? (count / total) * 100 : 0} />
-                            <span className="w-12 text-sm text-left ml-2">
-                                {total > 0 ? Math.round((count / total) * 100) : 0}%
-                            </span>
+                        {Object.keys(distributions).map((parameter) => (
+                            <div key={parameter}>
+                                <button
+                                    onClick={() => setSelectedCriteria(parameter)}
+                                    className={`py-2 px-4 rounded transition-all duration-300 ${
+                                        parameter === selectedCriteria
+                                            ? "text-black font-semibold text-xl"
+                                            : "text-gray-500 text-sm hover:text-gray-700 hover:text-lg"
+                                    }`}
+                                >
+                                    {parameter}
+                                </button>
                             </div>
                         ))}
                     </div>
+
+
+                    <div className="flex-1 space-y-3">
+                        {Object.entries(selectedDistribution)
+                            .sort(([a], [b]) => Number(b) - Number(a))
+                            .map(([rating, count]) => (
+                                <div key={rating} className="flex items-center">
+                                    <span className="w-16 text-sm text-right mr-2">
+                                        {rating}
+                                    </span>
+                                    <ProgressBar value={total > 0 ? (count / total) * 100 : 0} />
+                                    {/* <span className="w-12 text-sm text-left ml-2">
+                                        {total > 0 ? Math.round((count / total) * 100) : 0}%
+                                    </span> */}
+                                </div>
+                        ))}
+                    </div>
+
                     <div className="text-center md:w-32">
                         <div className="text-6xl font-bold mb-2">{average.toFixed(1)}</div>
                         <StarRating rating={average} />
@@ -124,8 +271,10 @@ const RatingDistributionCard = ({distribution, parameter}) =>{
 }
 
 
-export default function CoursePage() {
-  return (
+export default function CoursePage() {  
+    const navigate = useNavigate();
+
+    return (
     <div className="container mx-auto p-4 space-y-8 bg-blue-50">
         <Card>
             <CardHeader>
@@ -143,63 +292,23 @@ export default function CoursePage() {
             <CardTitle>Course Ratings</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                {Object.entries(ratings).map(([key, value]) => (
+                {Object.entries(distributions).map(([key, value]) => (
                     <div key={key} className="flex flex-col items-center">
                         <h3 className="text-lg font-semibold capitalize">
-                            {key.replace(/([A-Z])/g, ' $1').trim()}
+                            {key}
                         </h3>
                         <div className="flex items-center">
-                            {Array.from({ length: 5 }).map((_, index) => (
-                            <Star
-                                key={index}
-                                className={`w-5 h-5 ${
-                                index < (value)
-                                    ? 'text-yellow-400 fill-current'
-                                    : 'text-gray-300'
-                                }`}
-                            />
-                            ))}
-                            <span className="ml-2 text-xl font-bold">{value.toFixed(1)}</span>
+                            <StarRating rating={averageRating(value)}/>
+                            <span className="ml-2 text-xl font-bold">{averageRating(value).toFixed(1)}</span>
                         </div>
                     </div>
                 ))}
             </CardContent>
-
         </Card>
         
-        <RatingDistributionCard distribution = {distributions} parameter={"Grading Difficulty"}/>  
-        <RatingDistributionCard distribution = {distributions} parameter={"Academic Workload"}/>  
-        <RatingDistributionCard distribution = {distributions} parameter={"Teaching Quality"}/>  
-        <RatingDistributionCard distribution = {distributions} parameter={"Course Management"}/>
-        <RatingDistributionCard distribution = {distributions} parameter={"Course Material"}/>  
+        <RatingDistributionCard/>  
 
-        <Card>
-            <CardHeader>
-            <CardTitle>Professor Reviews</CardTitle>
-            </CardHeader>
-            <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                <Pie
-                    data={professorReviews}
-                    dataKey="reviews"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    fill="#8884d8"
-                    label
-                >
-                    {professorReviews.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-                </PieChart>
-            </ResponsiveContainer>
-            </CardContent>
-        </Card>
+        <ProfessorReviewsCard/>
 
         <Card>
             <CardHeader>
@@ -243,6 +352,7 @@ export default function CoursePage() {
 
                 <button
                     className="w-40 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+                    onClick={() => {navigate('/writeReviews')}}
                 >
                     Write a review
                 </button>
