@@ -17,32 +17,68 @@ const courses = [
 
 const years = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024].reverse()
 const semesters = [1, 2, 3, 4, 5, 6, 7, 8]
+const criteriaMapping = {
+  gradingDifficulty: 'Grading Difficulty',
+  academicWorkload: 'Academic Workload',
+  teachingQuality: 'Teaching Quality',
+  courseContent: 'Course Content',
+  management: 'Management'
+}
 
 export default function Component() {
   const navigate = useNavigate();
-  const [hoverRating, setHoverRating] = useState(0);
   const [formData, setFormData] = useState({
     professor: '',
     course: '',
     year: '',
     semester: '',
-    rating: '',
-    review: ''
+    review: '',
+    gradingDifficulty: '',
+    academicWorkload: '',
+    teachingQuality: '',
+    courseContent: '',
+    management: ''
   })
-
+  
   const handleChange = (value, fieldName) => {
     setFormData((prevState) => ({
       ...prevState,
       [fieldName]: value,
     }));
+    console.log(value, fieldName);
   };
   
-
+  
   const handleSubmit = (event) => {
     event.preventDefault()
     // Handle form submission here
     console.log('Form submitted', formData)
     navigate('/')
+  }
+  
+  const RatingDiv = ({criteria}) =>{
+    const [hoverRating, setHoverRating] = useState(0);
+
+    return(
+      <div>
+          <Label htmlFor= {criteria}>{criteriaMapping[criteria]}</Label>
+          <div className="flex items-center space-x-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+              <Star
+                  key={star}
+                  className={`w-8 h-8 cursor-pointer transition-all duration-200 transform ${
+                  star <= (hoverRating || formData[criteria])
+                      ? 'text-yellow-400 fill-yellow-400 scale-110'
+                      : 'text-gray-300'
+                  } hover:scale-125`}
+                  onClick={() => handleChange(star, criteria)}
+                  onMouseEnter={() => setHoverRating(star)}
+                  onMouseLeave={() => setHoverRating(0)}
+              />
+              ))}
+          </div>
+      </div>
+    );
   }
 
   return (
@@ -123,28 +159,12 @@ export default function Component() {
                 </Select>
               </div>
             </div>
-
-            <div>
-                <Label htmlFor="rating">Rating</Label>
-                <div className="flex items-center space-x-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                        key={star}
-                        className={`w-8 h-8 cursor-pointer transition-all duration-200 transform ${
-                        star <= (hoverRating || formData.rating)
-                            ? 'text-yellow-400 fill-yellow-400 scale-110'
-                            : 'text-gray-300'
-                        } hover:scale-125`}
-                        onClick={() => setFormData(prevState => ({
-                          ...prevState,
-                          ['rating']: star
-                        }))}
-                        onMouseEnter={() => setHoverRating(star)}
-                        onMouseLeave={() => setHoverRating(0)}
-                    />
-                    ))}
-                </div>
-            </div>
+            
+            <RatingDiv criteria={'gradingDifficulty'}/>
+            <RatingDiv criteria={'academicWorkload'}/>
+            <RatingDiv criteria={'teachingQuality'}/>
+            <RatingDiv criteria={'courseContent'}/>
+            <RatingDiv criteria={'management'}/>
 
             <div>
               <Label htmlFor="review">Review</Label>

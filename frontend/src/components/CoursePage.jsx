@@ -120,7 +120,7 @@ const renderActiveShape = (props) => {
     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload } = props
     return (
       <g>
-        <text x={cx} y={cy} dy={8} textAnchor="middle" verticalAnchor='middle' className='text-2xl font-bold' fill='gray'>
+        <text x={cx} y={cy} dy={8} textAnchor="middle" className='text-2xl font-bold' fill='gray'>
             {payload.reviews} reviews
         </text>
         <Sector
@@ -319,25 +319,19 @@ export default function CoursePage() {
                 {reviews.map((review) => (
                 <li key={review.id} className="border-b pb-4">
                     <div className="flex items-center mb-2">
-                    <Avatar className="h-10 w-10">
-                        <AvatarFallback>
-                        <User className="h-6 w-6" />
-                        </AvatarFallback>
-                    </Avatar>
-                    <div className="ml-4">
-                        <p className="font-semibold">{review.author}</p>
-                        <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                            <Star
-                            key={i}
-                            className={`w-4 h-4 ${
-                                i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
-                            }`}
-                            />
-                        ))}
+                        <Avatar className="h-10 w-10">
+                            <AvatarFallback>
+                                <User className="h-6 w-6" />
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="ml-4">
+                            <p className="font-semibold">{review.author}</p>
+                            <div className="flex items-center" style={{ transform: 'scale(0.7)', transformOrigin: 'left'}}>
+                                <StarRating rating={review.rating} />
+                            </div>
                         </div>
                     </div>
-                    </div>
+
                     <p className="text-gray-600">{review.comment}</p>
                 </li>
                 ))}
