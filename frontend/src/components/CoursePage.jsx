@@ -340,6 +340,7 @@ export default function CoursePage() {
             <div className="flex space-x-4">
                 <button
                     className="w-40 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+                    onClick={() => {navigate('/reviews')}}
                 >
                     Read all Reviews
                 </button>
